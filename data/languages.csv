@@ -1,0 +1,7 @@
+id,name,parent_id,type
+1,Proto-Indo-European,,proto
+2,Proto-Germanic,1,proto
+3,West Germanic,2,intermediate
+4,Old English,3,attested
+5,Middle English,4,attested
+6,Modern English,5,attested
