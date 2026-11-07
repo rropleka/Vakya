@@ -1,0 +1,9 @@
+symbol,feature,value,description
+ʷ,labialized,True,labialized
+ʲ,palatized,True,palatalized
+ʱ,voice,Aspirated,breathy voiced
+ʰ,aspirated,True,aspirated
+ː,long,True,long
+̩,syllabic,True,syllabic (combining vertical line below)
+̥,voice,Voiceless,voiceless (combining ring below)
+́,stressed,True,stressed (combining acute)

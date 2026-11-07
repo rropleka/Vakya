@@ -1,0 +1,19 @@
+pirantization: Aspirated stops became fricatives.
+
+    Phonological rule: pʰ tʰ kʰ → f θ x
+
+Spirantization: Stops became fricatives before another consonants. Exceptions: *tt became *st, while *pt retained in Avestan.
+
+    Phonological rule: p t k → f θ x / _C
+
+Deaspiration: All voiced aspirated plosives became simple plosives.
+
+    Phonological rule: C[+aspiration] → C[-aspiration]
+
+Debuccalization: s became h when not before plosives or n.
+
+    Phonological rule: C[+aspiration] → C[-aspiration]s → h / × _{P, n}
+
+Assibilation: Dentals become sibilants preceding another dentals. *t → *s and *d → *z
+
+    Phonological rule: C[+dental] → C[+sibilant] / _C[+dental]
