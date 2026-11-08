@@ -1,0 +1,182 @@
+# Proto-Indo-European → Proto-Germanic
+#
+# Source: Wikipedia, "Proto-Germanic language", section "Phonological stages from Proto-Indo-European
+# to end of Proto-Germanic" (which follows Ringe 2006), plus its "Grimm's and Verner's law",
+# "Labiovelars" and "Transcription" sections. Retrieved 2026-11-07.
+# https://en.wikipedia.org/wiki/Proto-Germanic_language
+#
+# Rules are in the page's order. Lines marked NOTE: are decisions the page doesn't settle; check them
+# against Ringe. Rules apply top to bottom; indented lines are rules (format: vakya/rules.py).
+
+from: Proto-Indo-European
+to: Proto-Germanic
+
+class C = [type=Consonant]
+class V = [type=Vowel]
+class H = {h₁, h₂, h₃}
+# sonorants (non-syllabic): Verner's law looks through these
+class R = {m, n, r, l, j, w}
+class N = {m, n}
+class O = {[manner=Stop], [manner=Fricative], [manner=Affricate]}
+# dentals for the epenthetic-s rule, and the dental consonants that turn m into n
+class T = {t, d, dʱ}
+class D = {t, d, θ, ð, s, z}
+
+# ---- Pre-Proto-Germanic ------------------------------------------------------------------------
+
+Allophonic colouring of e: e next to h₂ becomes a, next to h₃ becomes o.
+    e → a / h₂_, _h₂
+    e → o / h₃_, _h₃
+
+Centumization: The palatovelars merge with the plain velars.
+    kʲ gʲ gʲʱ → k g gʱ
+
+Epenthesis of u: u is inserted before the syllabic sonorants.
+    m̩ n̩ l̩ r̩ → um un ul ur
+
+Epenthetic s: s, inserted already in PIE between dentals, makes TsT, which becomes ss.
+    ∅ → s / T_T
+    TsT → ss
+
+Geminate shortening: geminates shorten after a consonant or a long vowel.
+# NOTE: the notation can't say "any geminate", and ss (from the rule above) is the only one the page
+# mentions, so only ss is shortened.
+    ss → s / C_, V[+long]_
+
+Word-final overlong vowels: word-final long vowels become overlong.
+    V[+long] → V[+overlong] / _#
+
+Cowgill's law: h₃ becomes g between a sonorant and w.
+# NOTE: moved before laryngeal loss. The page lists it after, but its own example (gʷih₃wós > gʷigwós)
+# needs h₃ still present after i, which laryngeal loss would already have lengthened away.
+# The page's "possibly h₂" is left out.
+    h₃ → g / R_w, V_w
+
+Loss of laryngeals: lost word-initially before a consonant and before vowels; lost after vowels with
+lengthening; two vowels left in hiatus contract into an overlong vowel.
+# NOTE: the hiatus contraction runs first, since otherwise "lost before vowels" would remove the
+# laryngeal in VHV before it could cause the contraction (-eh₂es > -âs).
+    H → ∅ / #_C
+    VHV → V[+overlong]
+    H → ∅ / _V
+    VH → V[+long]
+
+Vocalisation of remaining laryngeals: laryngeals left between consonants become ə.
+    H → ə
+
+Labialisation: velars are labialised by a following w.
+    kw gw gʱw → kʷ gʷ gʷʱ
+
+Delabialisation: labiovelars lose labialisation next to u (or un) or before t.
+    kʷ gʷ gʷʱ → k g gʱ / u_, un_, _u, _t
+
+# ---- Early Proto-Germanic ----------------------------------------------------------------------
+
+Loss of word-final non-high short vowels: final e, a, o are lost (with a preceding j or w), except in
+single-syllable words.
+# NOTE: "not in a single-syllable word" is written as "some vowel earlier in the word, followed by up
+# to three consonants". The accent shift onto the preceding syllable when the lost vowel was accented
+# isn't modelled.
+    {je, ja, jo, we, wa, wo} → ∅ / V(C)(C)(C)_#
+    {e, a, o} → ∅ / V(C)(C)(C)_#
+
+Grimm's law: chain shift of the three plosive series.
+# Applied as four steps, last link first, so that each series moves only once. The first step is the
+# page's "voiced plosives had already been devoiced before a voiceless obstruent" (the spirant law).
+    b d g gʷ bʱ dʱ gʱ gʷʱ → p t k kʷ p t k kʷ / _O[voice=Voiceless]
+    p t k kʷ → ɸ θ x xʷ // O_
+    b d g gʷ → p t k kʷ
+# NOTE: the page writes these as b d g gʷ "(with β ð ɣ allophones)" and says the Verner fricatives
+# merged with them. They're written here as the fricatives β ð ɣ ɣʷ, the same sounds Verner's law
+# produces, so the two sources do merge. The Proto-Germanic spelling table writes them b d g gw, as the
+# page does.
+    bʱ dʱ gʱ gʷʱ → β ð ɣ ɣʷ
+
+Verner's law: voiceless fricatives are voiced after an unaccented vowel, including across a sonorant.
+# NOTE: the exception for a following voiceless consonant (st, ht, ft stay voiceless) isn't on the
+# page; it's the usual statement of the law. Check against Ringe.
+    ɸ θ x xʷ s → β ð ɣ ɣʷ z / V[-stressed]_, V[-stressed]R_ // _[voice=Voiceless]
+
+Stress on the first syllable: the PIE accent is lost; every word is stressed on its first syllable.
+    V[+stressed] → V[-stressed]
+    V → V[+stressed] / #(C)(C)(C)_
+
+# Word-initial gʷ > b: marked dubious on the page, and its Labiovelars section calls the evidence
+# slim, so it's left out:
+#    ɣʷ → β / #_
+
+owo contraction: unstressed owo becomes oː.
+    o[-stressed]wo → oː
+
+ew to ow: unstressed ew becomes ow before a consonant or word-finally.
+    e[-stressed]w → ow / _C, _#
+
+Unstressed e to i: unstressed e becomes i, except before r; unstressed ej then contracts to iː.
+    e[-stressed] → i // _r
+    i[-stressed]j → iː / _C, _#
+
+Unstressed ji to i: unstressed ji becomes i; iji becomes iː.
+    iji → iː
+    j → ∅ / _i[-stressed]
+
+Merging of non-high back vowels: o and a merge as ɑ, at every length.
+    o a → ɑ
+    oː aː → ɑː
+    ô â → ɑ̂
+
+# ---- Late Proto-Germanic -----------------------------------------------------------------------
+
+Final m to n: word-final m becomes n.
+    m → n / _#
+
+m to n before dentals: m becomes n before dental consonants.
+    m → n / _D
+
+Loss of final n: word-final n is lost after unstressed syllables, nasalising the vowel before it.
+    V[-stressed]n → V[+nasal] / _#
+
+Lowering of nasal ẽː: nasal ẽː is lowered to ɑ̃ː.
+    ẽː → ɑ̃ː
+
+Elimination of ə: lost between consonants when unstressed, ɑ elsewhere.
+    ə[-stressed] → ∅ / C_C
+    ə → ɑ
+
+Assimilation of sonorants: nw, ln, zm become nn, ll, mm.
+    nw ln zm → nn ll mm
+
+Loss of final t: word-final t is lost after unstressed syllables.
+    t → ∅ / V[-stressed]_#, V[-stressed]C_#
+
+ɣʷ to w: ɣʷ becomes w (sometimes ɣ).
+# NOTE: the "sometimes" comes from the page's Labiovelars section: kept after n (*sangwaz), and ɣ
+# before r word-initially (*grindaną). Its "next to u" case is already handled by delabialisation.
+    ɣʷ → ɣ / #_r
+    ɣʷ → w // n_
+
+Raising of long a: long a is raised to ɔː (written ō), at every length and nasal or not.
+    ɑː ɑ̃ː ɑ̂ ɑ̃̂ → ɔː ɔ̃ː ɔ̂ ɔ̃̂
+
+Early i-mutation: e becomes i when i or j follows in the same or the next syllable; this also turns the
+remaining ei into iː.
+# NOTE: "same or next syllable" is approximated as "after at most two consonants".
+    {ej, ei} → iː / _C, _#
+    e → i / _(C)(C){i, iː, j}
+
+Pre-nasal raising: e becomes i before a syllable-final nasal.
+    e → i / _NC, _N#
+
+Loss of intervocalic j: j is lost between vowels, except after i; vowels left in hiatus contract.
+# NOTE: the page names only ɑjɑ > ɑː as a contraction ("long vowels or diphthongs"); the others are
+# left as vowel sequences (diphthongs).
+    j → ∅ / V_V // i_
+    ɑɑ → ɑː
+
+Loss of n before x: n is lost before x, lengthening and nasalising the vowel before it.
+    Vn → V[+long +nasal] / _x
+
+# ---- Transcription -----------------------------------------------------------------------------
+
+Diphthongs: not a sound change. The page writes j and w after a vowel as i and u (ai, au, eu, iu, ōu)
+unless another vowel follows; this puts them in that form for the later stages.
+    j w → i u / V_C, V_#

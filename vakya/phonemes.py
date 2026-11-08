@@ -4,6 +4,7 @@ import re
 import unicodedata
 from dataclasses import dataclass, field
 from functools import cache
+from itertools import combinations
 
 from . import DATA_DIR
 
@@ -40,6 +41,9 @@ class Inventory:
         self.phonemes = phonemes        # symbol -> {feature: value}
         self.diacritics = diacritics    # symbol -> {feature: value}
         self.max_length = max(len(symbol) for symbol in phonemes)
+        self.by_features = {}
+        for symbol, features in phonemes.items():
+            self.by_features.setdefault(frozenset(features.items()), symbol)
 
     @classmethod
     def load(cls, directory=PHONEME_DIR):
@@ -111,13 +115,65 @@ class Inventory:
             result.append(phoneme)
         return result
 
+    def phoneme_for(self, features) -> Phoneme:
+        """The phoneme with exactly these features, written as a table symbol plus diacritics if needed."""
+        key = frozenset((name, value) for name, value in dict(features).items() if value is not False)
+        if key not in self.by_features:
+            self.by_features[key] = self.spell_features(dict(key))
+        return Phoneme(self.by_features[key], key)
+
+    def spell_features(self, target):
+        marks = list(self.diacritics.items())
+        for count in range(1, 4):           # fewest diacritics wins, then the shortest base symbol
+            found = []
+            for symbol, base in self.phonemes.items():
+                for combo in combinations(marks, count):
+                    features = dict(base)
+                    for _, added in combo:
+                        features.update(added)
+                    if features == target:
+                        # combining marks go on the letter, spacing modifiers (ʷ ː) after it
+                        found.append(symbol + "".join(mark for mark, _ in combo if unicodedata.combining(mark))
+                                            + "".join(mark for mark, _ in combo if not unicodedata.combining(mark)))
+            if found:
+                return min(found, key=len)
+        described = ", ".join(f"{name}={value}" for name, value in sorted(target.items()))
+        raise PhonemeError(f"no phoneme in the inventory has the features {described}")
+
 @cache
 def inventory():
     return Inventory.load()
 
+ASCII_PIE = [
+    # (typed, PIE notation, description) for help screens
+    ("k' g' g'h", "ḱ ǵ ǵʰ", "palatovelars"),
+    ("kw gw gwh", "kʷ gʷ gʷʰ", "labiovelars"),
+    ("bh dh gh", "bʰ dʰ gʰ", "aspirates"),
+    ("h1 h2 h3", "h₁ h₂ h₃", "laryngeals"),
+    ("e: o: a: i: u:", "ē ō ā ī ū", "long vowels"),
+    ("e' o' ...", "é ó ...", "accent (after a vowel or syllabic resonant)"),
+    ("R L M N", "r̥ l̥ m̥ n̥", "syllabic resonants"),
+    ("k.w", "kw", "'.' separates letters that would otherwise combine"),
+]
+
+def ascii_to_pie(text):
+    """
+    Turn keyboard-friendly ASCII (se'k's, ph2te:'r, kMto'm) into PIE notation (séḱs, ph₂tḗr, ḱm̥tóm).
+    PIE notation already typed with diacritics passes through unchanged.
+    """
+    text = re.sub(r"h([123])", lambda m: "h" + "₁₂₃"[int(m[1]) - 1], text)
+    text = re.sub(r"([kg])'", "\\1\u0301", text)                       # palatal, as the acute on ḱ ǵ
+    text = re.sub(r"([bdg]\u0301?w?)h(?![₁₂₃])", r"\1ʰ", text)            # bh gh g'h gwh, but not gh₂
+    text = re.sub(r"([kg])w", r"\1ʷ", text)
+    text = text.translate({ord("R"): "r\u0325", ord("L"): "l\u0325", ord("M"): "m\u0325", ord("N"): "n\u0325"})
+    # length and accent may come in either order: e:' and e': are both ḗ
+    text = re.sub(r"([aeiou])(')?:", lambda m: m[1] + "\u0304" + ("\u0301" if m[2] else ""), text)
+    text = re.sub(r"([aeiou\u0304\u0325])'", "\\1\u0301", text)
+    return unicodedata.normalize("NFC", text.replace(".", ""))
+
 def from_pie(text):
     """Convert conventional PIE notation (*ḱḗr, *septḿ̥, *gʷʰen-) to the IPA-based inventory."""
-    text = normalize(text).strip("*-")
+    text = normalize(ascii_to_pie(text)).strip("*-")
     text = re.sub("([kg])́", r"\1ʲ", text)         # acute on a velar marks a palatal: ḱ ǵ
     text = text.replace("̥", "̩")             # ring below marks a syllabic resonant: r̥ m̥
     text = re.sub("̄([̀-ͯ]*)", r"\1ː", text)  # macron marks length: ē → eː (keep accent on the vowel)

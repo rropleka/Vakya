@@ -18,6 +18,7 @@ NEGATIONS = "×!¬"
 PLUS = "+"
 MINUS = "-−–"
 FEATURE_NAME = re.compile(r"[^\s,\]=+\-−–]+")
+FEATURE_VALUE = re.compile(r"[^\s,\]=]+")      # values may contain hyphens: backness=Near-front
 
 class RuleParseError(Exception):
     def __init__(self, message, text=None, position=None):
@@ -41,6 +42,7 @@ class Feature:
 @dataclass(frozen=True)
 class Segment:
     phoneme: Phoneme
+    features: tuple = ()        # e[-stressed]: the sound, with these features changed or required
 
 @dataclass(frozen=True)
 class Class:
@@ -182,6 +184,15 @@ class Parser:
             if not options:
                 self.error("empty set")
             self.expect("}")
+            if self.peek() == "[":
+                # {i, u}[-stressed] is "i or u, unstressed": the features apply to every member
+                start = self.pos
+                features = self.matrix()
+                if any(len(option) != 1 or not isinstance(option[0], (Segment, Class)) for option in options):
+                    self.pos = start
+                    self.error("features after a set apply to each member, so every member must be one sound")
+                options = [(Segment(o[0].phoneme, o[0].features + features),) if isinstance(o[0], Segment)
+                           else (Class(o[0].name, o[0].features + features),) for o in options]
             return Choice(tuple(options))
 
         if c == "(":
@@ -205,9 +216,7 @@ class Parser:
         if matched is None:
             self.error(f"unknown symbol {c!r} (U+{ord(c):04X})")
         phoneme, self.pos = matched
-        if self.peek() == "[":
-            self.error("feature matrix after a phoneme; use a class letter or a bare [...]")
-        return Segment(phoneme)
+        return Segment(phoneme, self.matrix() if self.peek() == "[" else ())
 
     def matrix(self):
         self.expect("[")
@@ -237,7 +246,7 @@ class Parser:
                 if sign is not None:
                     self.error("use either +/- or =value, not both")
                 self.pos += 1
-                value = FEATURE_NAME.match(self.text, self.pos)
+                value = FEATURE_VALUE.match(self.text, self.pos)
                 if value is None:
                     self.error("expected a feature value")
                 self.pos = value.end()
@@ -254,8 +263,6 @@ class Parser:
     def environments(self):
         if self.peek().isspace():
             self.skip_space()
-        if self.peek() == "{":
-            self.error("braced environment lists are not supported; separate environments with commas")
 
         environments = []
         while True:
@@ -273,66 +280,29 @@ class Parser:
             self.pos += 1
 
     def context(self, stops):
-        # spacing inside an environment is insignificant: V _ V is V_V
+        # spaces around _ are fine (V _ V is V_V), but not between sounds: "_N or if nasalized" is prose,
+        # and would otherwise read as the sounds N o r i f …
         elements = []
-        while True:
-            self.skip_space()
-            if self.at_end() or self.peek() in stops or self.arrow():
-                return tuple(elements)
+        self.skip_space()
+        while not (self.at_end() or self.peek() in stops or self.arrow()):
             if self.peek() == "_":
                 self.error("only one '_' per environment")
             elements.append(self.element())
+            if self.peek().isspace():
+                gap = self.pos
+                self.skip_space()
+                if not (self.at_end() or self.peek() in stops or self.arrow() or self.peek() in "_,"):
+                    self.pos = gap
+                    self.error("space inside an environment (a prose condition?); write sounds together, e.g. V_CV")
+        return tuple(elements)
 
 def parse_rule(text) -> Rule:
     return Parser(text).parse()
 
-@dataclass(frozen=True)
-class Entry:
-    name: str
-    description: str
-    rule_text: str
-    line: int
-
-def read_labeled(text):
-    """
-    Read sources laid out as
-
-        Name: prose description.
-
-            Phonological rule: p t k → f θ x / _C
-    """
-    entries = []
-    name = description = None
-    for number, line in enumerate(text.splitlines(), 1):
-        line = line.strip()
-        if not line:
-            continue
-        rule = re.match(r"Phonological rule:\s*(.*)", line)
-        if rule:
-            if name is None:
-                raise RuleParseError(f"line {number}: rule without a name")
-            entries.append(Entry(name, description, rule.group(1), number))
-            name = description = None
-        elif name is not None:
-            description += " " + line
-        else:
-            name, _, description = line.partition(":")
-            name, description = name.strip(), description.strip()
-    return entries
-
-def parse_source(text, reader=read_labeled):
-    """Parse every rule in a source; returns ([(entry, rule)], [(entry, error)]) so one bad line doesn't stop the rest."""
-    rules, errors = [], []
-    for entry in reader(text):
-        try:
-            rules.append((entry, parse_rule(entry.rule_text)))
-        except RuleParseError as error:
-            errors.append((entry, error))
-    return rules, errors
-
 def format_element(element):
     if isinstance(element, Segment):
-        return str(element.phoneme)
+        features = " ".join(format_feature(feature) for feature in element.features)
+        return str(element.phoneme) + (f"[{features}]" if features else "")
     if isinstance(element, Class):
         features = " ".join(format_feature(feature) for feature in element.features)
         return (element.name or "") + (f"[{features}]" if features else "")

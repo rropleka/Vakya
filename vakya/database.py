@@ -5,8 +5,7 @@ import sqlite3
 from . import DATA_DIR, DB_PATH
 
 LANGUAGES_CSV = os.path.join(DATA_DIR, "languages.csv")
-SOUND_CHANGES_CSV = os.path.join(DATA_DIR, "sound_changes.csv")
-SOURCES = (LANGUAGES_CSV, SOUND_CHANGES_CSV)
+SOURCES = (LANGUAGES_CSV,)
 
 def build_tables(cursor):
     cursor.execute("""
@@ -16,20 +15,6 @@ def build_tables(cursor):
             Parent_Id   INT     REFERENCES LANGUAGES(Id),
             Type        TEXT    CHECK (Type IN ('proto', 'attested', 'intermediate', 'dialect'))
         )
-        """)
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS SOUND_CHANGES(
-            Order_Index     INT     NOT NULL,
-            Parent_Id       INT     NOT NULL,
-            Child_Id        INT     NOT NULL,
-            In_Regex        TEXT    NOT NULL,
-            Out_Regex       TEXT,
-            Description     TEXT,
-
-            UNIQUE(Parent_Id, Child_Id, Order_Index),
-            FOREIGN KEY(Parent_Id)  REFERENCES LANGUAGES(Id),
-            FOREIGN KEY(Child_Id)   REFERENCES LANGUAGES(Id)
-        );
         """)
 
     with open(LANGUAGES_CSV, 'r', encoding='utf-8') as f:
@@ -46,27 +31,12 @@ def build_tables(cursor):
                 )
             )
 
-    with open(SOUND_CHANGES_CSV, 'r', encoding='utf-8') as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            cursor.execute(
-                "INSERT INTO SOUND_CHANGES (Order_Index, Parent_Id, Child_Id, In_Regex, Out_Regex, Description) VALUES (?,?,?,?,?,?)",
-                (
-                    int(row['order_index']),
-                    int(row['parent_id']),
-                    int(row['child_id']),
-                    row['in_regex'],
-                    row['out_regex'],
-                    row['description']
-                )
-            )
-
 def rebuild(path=DB_PATH):
     with sqlite3.connect(path) as connection:
         cursor = connection.cursor()
         cursor.execute("PRAGMA foreign_keys = ON")
 
-        cursor.execute("DROP TABLE IF EXISTS SOUND_CHANGES") # have to drop this first or else FOREIGN KEY constraint will fail
+        cursor.execute("DROP TABLE IF EXISTS SOUND_CHANGES") # left over from databases built before rule files
         cursor.execute("DROP TABLE IF EXISTS LANGUAGES")
 
         build_tables(cursor)
@@ -112,10 +82,20 @@ def find_language(connection, key):
                                  (key,)).fetchone()
     return row
 
-def rule_counts(connection):
-    """Number of sound changes leading into each language, by child id."""
-    return dict(connection.execute("SELECT Child_Id, COUNT(*) FROM SOUND_CHANGES GROUP BY Child_Id").fetchall())
+def lineage(connection, id):
+    """The languages from the root down to this one, as (id, name, parent_id, type)."""
+    rows = connection.execute("""WITH RECURSIVE LINEAGE AS (
+                                    SELECT Id, Name, Parent_Id, Type, 0 AS Depth
+                                    FROM LANGUAGES
+                                    WHERE Id = ?
 
-def sound_changes(connection):
-    return connection.execute("""SELECT Parent_Id, Child_Id, Order_Index, In_Regex, Out_Regex, Description
-                                 FROM SOUND_CHANGES ORDER BY Parent_Id, Child_Id, Order_Index""").fetchall()
+                                    UNION ALL
+
+                                    SELECT LANGUAGES.Id, LANGUAGES.Name, LANGUAGES.Parent_Id, LANGUAGES.Type, Depth + 1
+                                    FROM LANGUAGES
+                                    JOIN LINEAGE ON LANGUAGES.Id = LINEAGE.Parent_Id
+                                )
+
+                                SELECT Id, Name, Parent_Id, Type FROM LINEAGE ORDER BY Depth DESC
+                                """, (id,)).fetchall()
+    return rows

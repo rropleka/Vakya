@@ -1,0 +1,61 @@
+# Sanskrit → Prakrit (the dramatic Prakrits, ca. 200 CE)
+#
+# Source: Wikipedia, "Prakrit", section "Development of Prakrit from Old Indo-Aryan", subsections "Early
+# changes common to all Indo-Aryan languages", "Sound changes common to Pali and Prakrit", "Changes after
+# the split of Pali and Prakrit" and "Changes up to Dramatic Prakrits" (retrieved 2026-11-07)
+#   https://en.wikipedia.org/wiki/Prakrit
+#
+# In the page's order. Changes it calls sporadic or unpredictable (rhotic cerebralisation, the a/u
+# outcomes of ṛ) and the cluster assimilations, which this notation can't write generally, are left out.
+
+from: Sanskrit
+to: Prakrit
+
+class C = [type=Consonant]
+class V = [type=Vowel]
+
+Loss of accent: the Vedic pitch accent is lost.
+    V[+stressed] → V[-stressed]
+
+Monophthongisation: before a consonant, e (aj) and o (aw) become ē and ō.
+    aj aw → eː oː / _C, _#
+
+Final consonants: final plosives are lost, lengthening the vowel; final -aḥ becomes -o and other final
+visarga is lost; final nasals nasalise the vowel.
+    Vk Vʈ Vt Vp → V[+long] V[+long] V[+long] V[+long] / _#
+    ah → oː / _#
+    h → ∅ / _#
+    Vm Vn → V[+nasal] V[+nasal] / _#
+
+MIA monophthongisation: aj, aja, aji, ajō, avi become ē; aw, ava become ō.
+    {aj, aja, aji, ajoː, aʋi} → eː
+    {aw, aʋa} → oː
+
+Loss of ṛ (Central dialect): initial ṛ becomes ri, medial ṛ becomes i.
+# The page: "cases of ṛ > a and ṛ > u, especially after labial, are occasionally found".
+    r̩ → ri / #_
+    r̩ → i
+
+Sibilants: ś, ṣ and s merge as s.
+    ɕ ʂ → s s
+
+Shortening: a long vowel before a consonant cluster is shortened.
+    V[+long] → V[-long] / _CC
+
+Initial y: initial y becomes j.
+    j → dʒ / #_
+
+Nasals: n and ṇ merge as ṇ.
+    n → ɳ
+
+Lenition of intervocalic stops: single voiceless stops become voiced; the non-retroflex ones then
+become spirants; aspirated spirants become h, β becomes v, and the remaining spirants are lost.
+    p t k tʃ → b d g dʒ / V_V
+    pʰ tʰ kʰ → bʱ dʱ gʱ / V_V
+    g gʱ dʒ d dʱ b bʱ → ɣ ɣʱ ʑ ð ðʱ β βʱ / V_V
+    ɣʱ ðʱ βʱ → ɦ ɦ ɦ
+    β → ʋ
+    ɣ ʑ ð → ∅ ∅ ∅
+
+Lenition of y: intervocalic y is lost.
+    j → ∅ / V_V

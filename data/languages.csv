@@ -5,3 +5,7 @@ id,name,parent_id,type
 4,Old English,3,attested
 5,Middle English,4,attested
 6,Modern English,5,attested
+7,Proto-Indo-Iranian,1,proto
+8,Sanskrit,7,attested
+9,Prakrit,8,attested
+10,Hindi,9,attested

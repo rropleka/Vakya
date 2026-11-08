@@ -1,0 +1,42 @@
+# Middle English → Modern English
+#
+# Sources (retrieved 2026-11-07):
+#   Wikipedia, "Middle English phonology", section "Reduction and loss of unstressed vowels"
+#     https://en.wikipedia.org/wiki/Middle_English_phonology
+#   Wikipedia, "Great Vowel Shift", sections "Changes", "First phase", "Second phase", "Later mergers"
+#     https://en.wikipedia.org/wiki/Great_Vowel_Shift
+#
+# Regular changes only. Modern English "father" is NOT the regular outcome of Middle English fader:
+# its -th- (d > ð before -er) is sporadic and its /ɑː/ is irregular, so the rules give the regular
+# /ˈfeɪdər/ and the attested form comes from data/attested.csv. Pronunciation is General American-like
+# (rhotic); there is no spelling table, since Modern English spelling can't be derived by rule.
+
+from: Middle English
+to: Modern English
+
+class C = [type=Consonant]
+class V = [type=Vowel]
+
+Loss of final -e: final unstressed ə is lost ("around Chaucer's time").
+    ə → ∅ / _#
+
+Merger of ɔːw with ɔː: the Middle English diphthong spelled ow (snow) falls together with long ɔː
+(toe–tow merger), so the vowel shift gives it oʊ.
+# NOTE: not on these pages; the merger is the usual account of snow, know, grow.
+    ɔːw → ɔː / _C, _#
+
+Great Vowel Shift, first phase: close-mid eː, oː rise to iː, uː, and the close vowels iː, uː become
+diphthongs.
+# NOTE: the page says uː did not shift before labial consonants or after j (soup); not modelled.
+    iː uː eː oː → ei ou iː uː
+
+Great Vowel Shift, second phase: aː rises to æː (around 1550); after 1600 æː rises to ɛː, and the open-mid
+ɛː, ɔː rise to eː, oː.
+    aː → æː
+    æː ɛː ɔː → ɛː eː oː
+
+Later developments: the new diphthongs become aɪ, aʊ; the meat vowel (eː, from ME ɛː) merges with the meet
+vowel iː; the mate vowel (ɛː, from ME aː) becomes eɪ; the boat vowel oː becomes oʊ.
+# NOTE: "great", which kept /eɪ/, is one of the exceptions the page mentions.
+    ei ou → aɪ aʊ
+    eː ɛː oː → iː eɪ oʊ

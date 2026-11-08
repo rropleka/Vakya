@@ -3,7 +3,7 @@ import unittest
 try:
     from textual.widgets import DataTable, Input, Static, Tree
 
-    from vakya.tui import RulesScreen, VakyaApp
+    from vakya.tui import HelpScreen, RulesScreen, VakyaApp
 except ImportError:
     VakyaApp = None
 
@@ -16,14 +16,14 @@ class TuiTest(unittest.IsolatedAsyncioTestCase):
         app = VakyaApp("*séḱs")
         async with app.run_test(size=(120, 40)) as pilot:
             tree = app.query_one("#tree", Tree)
-            self.assertIn("séks", str(app.nodes[2].label))
+            self.assertIn("sehs", str(app.nodes[2].label))
             self.assertIn("/sékʲs/", str(app.query_one("#phonemes", Static).render()))
 
             await pilot.press("enter", "down")          # into the tree, onto Proto-Germanic
             self.assertEqual(app.selected, 2)
             rows = cells(app.query_one("#steps", DataTable))
-            self.assertEqual(rows[0][1], "ḱ → k")
-            self.assertEqual(rows[0][2], "séḱs → séks")
+            self.assertEqual(rows[1][1], "Centumization")
+            self.assertEqual(rows[1][3], "sékʲs → séks")
 
             await pilot.press("f")                      # features view
             rows = cells(app.query_one("#steps", DataTable))
@@ -38,6 +38,17 @@ class TuiTest(unittest.IsolatedAsyncioTestCase):
             self.assertTrue(app.is_running)
             self.assertIn("unknown symbol 'q'", str(app.query_one("#phonemes", Static).render()))
 
+    async def test_ascii_input_and_help(self):
+        app = VakyaApp("")
+        async with app.run_test(size=(120, 40)) as pilot:
+            await pilot.press(*"se'k's")
+            self.assertIn("*séḱs", str(app.query_one("#phonemes", Static).render()))
+            self.assertIn("sehs", str(app.nodes[2].label))
+            await pilot.press("enter", "f1")
+            self.assertIsInstance(app.screen, HelpScreen)
+            await pilot.press("escape")
+            self.assertNotIsInstance(app.screen, HelpScreen)
+
     async def test_rules_screen(self):
         app = VakyaApp()
         async with app.run_test(size=(120, 40)) as pilot:
@@ -48,13 +59,15 @@ class TuiTest(unittest.IsolatedAsyncioTestCase):
             detail = cells(app.screen.query_one("#rule-detail", DataTable))
             self.assertIn(["change", "t → θ"], detail)
 
-            sources = app.screen.query_one("#sources", DataTable)
-            statuses = [row[4] for row in cells(sources)]
-            self.assertEqual(statuses.count("ok"), 4)
-            self.assertIn("second arrow", statuses[3])
-
-            await pilot.press("tab", "down", "down", "down", "enter")   # load the broken Debuccalization rule
+            await pilot.press(*" -> h")                 # now two rules run together
             self.assertIn("second arrow", str(app.screen.query_one("#rule-error", Static).render()))
+
+            sources = app.screen.query_one("#sources", DataTable)
+            rows = cells(sources)
+            centumization = next(i for i, row in enumerate(rows) if row[2] == "Centumization")
+            await pilot.press("tab", *["down"] * centumization, "enter")   # load a rule from the rule files
+            self.assertEqual(app.screen.query_one("#rule", Input).value, "kʲ gʲ gʲʱ → k g gʱ")
+            self.assertIn(["change", "kʲ → k"], cells(app.screen.query_one("#rule-detail", DataTable)))
 
             await pilot.press("escape")
             self.assertNotIsInstance(app.screen, RulesScreen)

@@ -1,0 +1,173 @@
+# West Germanic → Old English (Early West Saxon, the dialect of standard Old English spelling)
+#
+# Sources (retrieved 2026-11-07):
+#   Wikipedia, "Phonological history of Old English", section "Phonological processes", which lists
+#     the changes "chronologically in roughly the order described"
+#     https://en.wikipedia.org/wiki/Phonological_history_of_Old_English
+#   Wikipedia, "Germanic umlaut", section "I-mutation in Old English" (the West Saxon column)
+#     https://en.wikipedia.org/wiki/Germanic_umlaut
+#
+# Changes the page gives only for other dialects (second fronting, Anglian smoothing, Anglian
+# retraction) are left out. NOTE: lines are decisions the page doesn't settle.
+
+from: West Germanic
+to: Old English
+
+class C = [type=Consonant]
+class V = [type=Vowel]
+class N = {m, n}
+class R = {r, l}
+# front and back vowels
+class E = {[type=Vowel backness=Front], [type=Vowel backness=Near-front]}
+class B = [type=Vowel backness=Back]
+# voiceless fricatives, for nasal absorption
+class F = {ɸ, f, θ, s, x}
+# palatal consonants, for palatal diphthongisation
+class P = {tʃ, ʝ, j, ʃ}
+
+Absorption of nasals before fricatives: a nasal is lost before a voiceless fricative, lengthening the
+vowel; a becomes a long nasal vowel (later ō).
+# NOTE: the page only names the change and refers to the "Ingvaeonic nasal spirant law" article; the
+# rule shape (ɑ to nasal ɑ̃ː, other vowels lengthened) follows its examples five, mouth, us and the
+# page's later remark that nasalised ą̄ was raised to ǭ.
+    ɑN → ɑ̃ː / _F
+    VN → V[+long] / _F
+
+First a-fronting: ā is fronted to ǣ unless followed by n, m or nasalised.
+    ɑː → æː // _N
+
+Raising before nasals: nasalised ą̄ and the sequences ān, ām, which first a-fronting left alone, are
+raised to ǭ, ōn, ōm.
+# NOTE: the page says only "later raised". It's placed before monophthongisation because the new ā
+# from ai doesn't raise (stān "stone", not *stōn).
+    ɑ̃ː → õː
+    ɑː → oː / _N
+
+Monophthongisation: ai becomes ā (after first a-fronting, so it stays ā).
+    ɑi → ɑː
+
+Second a-fronting (Anglo-Frisian brightening): a is fronted to æ unless followed by n or m or
+nasalised; n and m block it only in stressed syllables.
+    ɑ[+stressed] → æ // _N
+    ɑ[-stressed] → æ
+
+Diphthong height harmonisation: æu becomes ēa, eu becomes ēo, iu becomes īu.
+    æu eu iu → æːɑ eːo iːu
+
+Breaking: short front vowels become diphthongs before h, w, or r/l plus a consonant; long ī and ǣ
+before h only.
+# NOTE: the page says breaking doesn't happen before ll from West Germanic gemination of l + j; rj and
+# lj are excluded on the same grounds (*harjaz > here, not *hiere).
+    æ → æɑ / _x, _rC, _lC // _rj, _lj, _llj
+    e → eo / _x, _rC, _lx, _lk, _w // _rj
+    i → iu / _x, _rC, _w // _wi
+    iː æː → iːu æːɑ / _x
+
+A-restoration: æ is backed to a when a back vowel is in the next syllable.
+    æ → ɑ / _C(C)B
+
+Loss of final short vowels: final non-high short vowels are lost in words of more than one syllable.
+# NOTE: the West Germanic page puts the loss of final -a there; it's here because the Old English
+# page's own example (*faraną > *faraną > *faran, step 5 after a-restoration) needs it after
+# a-restoration.
+    {ɑ, æ, ɑ̃, æ̃}[-stressed] → ∅ / V(C)(C)(C)_#
+
+Loss of nasality: vowel nasality, which lasted at least until a-restoration, is lost.
+    V[+nasal] → V[-nasal]
+
+Final j: j left at the end of a word after a consonant becomes i (see the West Germanic file).
+    j → i / C_#
+
+Palatalisation: k, g, sk and ɣ become palatal in front-vowel environments.
+# g was [ɡ] after n or doubled and [ɣ] elsewhere; that split is made first.
+# NOTE: sk is handled before k so that sk becomes ʃ rather than s plus ċ.
+    ɣ → g / n_
+    ɣɣ → gg
+    sk → ʃ / #_
+    sk → ʃ / _{i, iː, j}
+    sk → ʃ / E_ // _B
+    k → tʃ / _{i, iː, j}
+    k → tʃ / #_E
+    k → tʃ / i_, iː_, in_, iːn_ // _B
+    gg → dʒdʒ / _{i, iː, j}
+    g → dʒ / _{i, iː, j}
+    ɣ → ʝ / _E, _j
+    ɣ → ʝ / E_ // _B
+# "by now [ɡ] was the form used in initial position"
+    ɣ → g / #_
+
+Palatal diphthongisation (West Saxon): e, ē, æ, ǣ become ie, īe, ea, ēa after ċ, ġ and sċ.
+# NOTE: stressed vowels only, and not the æ that already begins a diphthong (ċeald, not *ċeaald).
+    e[+stressed] eː[+stressed] æ[+stressed] æː[+stressed] → ie iːe æɑ æːɑ / P_ // _V
+
+I-mutation (West Saxon): vowels are fronted or raised when i, ī or j follows in the next syllable.
+# NOTE: "next syllable" is approximated as "after up to three consonants". Every mapping is in one
+# rule so they apply together (otherwise æ > e would feed e > i).
+    æɑ æːɑ io iːu ɑ ɑː æ e o oː u uː → ie iːe ie iːe æ æː e i ø øː y yː / _C(C)(C){i, iː, j}
+# "a > e particularly before nasal consonants": a before a nasal went to e, not æ.
+    æ → e / _N(C)(C){i, iː, j}
+
+Medial syncopation: short a, æ, e are lost in medial open syllables.
+    {ɑ, æ, e}[-stressed] → ∅ / VC_CV
+
+Loss of medial j: internal j is lost after a long syllable.
+# The page: "It is possible that loss of medial -j- occurred slightly earlier than loss of -ij-, and in
+# particular before high-vowel loss", needed for *nuttju > nytt (and *brugjō > bryċġ).
+    j → ∅ / V[+long]C_V, V[+long]VC_V, VCC_V
+
+High vowel loss: unstressed i and u are lost in an open syllable after a long syllable (a long vowel
+or diphthong, or a vowel before two consonants); two short syllables count as one long one. Final
+loss comes before medial loss.
+# NOTE: "long vowel or diphthong" is read as long vowel or *long* diphthong (whose first element is
+# long here); short diphthongs count as short, as the page's ġiefu (< *gebō) shows.
+# A long diphthong (īe) has its length on the first half, so V[+long]VC covers it.
+    {i, u}[-stressed] → ∅ / V[+long]C_#, V[+long]VC_#, VCC_#, V[-long]CV[-long]C_#
+    {i, u}[-stressed] → ∅ / V[+long]C_CV, V[+long]VC_CV, VCC_CV
+
+Loss of -ij-: internal ij is lost after a long syllable (just after high vowel loss), along with j
+left behind when high vowel loss took the i of ij.
+    {ij, j} → ∅ / V[+long]C_V, V[+long]VC_V, VCC_V
+
+Back mutation (West Saxon): short e and i become eo and io before a single labial or liquid followed
+by a back vowel.
+# A vowel right after another vowel is the second half of a diphthong (ie), not a vowel of its own.
+    e i → eo io / _{ɸ, f, β, w, l, r}B // V_
+
+H-loss: h is lost between vowels and between r/l and a vowel, lengthening a preceding short vowel;
+an unstressed vowel after it is absorbed into the long vowel.
+# NOTE: written as three steps: lengthen the vowel (or a diphthong's first element), drop h with the
+# absorbed vowel, drop h after r/l. The page's "vowel assimilation" of other vowels in hiatus isn't
+# modelled beyond this.
+    V → V[+long] / _(V)(R)xV // V_
+    xV[-stressed] → ∅ / V_
+    x → ∅ / R_V
+
+Palatal umlaut: short e, eo, io become i before final ht, hs, hþ.
+    {e, eo, io} → i / _x{t, s, θ}#
+
+Unstressed vowel reduction: remaining long ō and ô become a; all other unstressed long vowels are
+shortened; the short front vowels æ and i merge as e; u is written o before a consonant.
+# NOTE: the page gives the endings -ung, -um and -uc as exceptions to u > o.
+    {oː, ô}[-stressed] → ɑ
+    V[+long -stressed] → V[-long]
+    {æ, i}[-stressed] → e
+    u[-stressed] → o / _C // _ŋ, _ng, _m, _k
+
+Diphthong changes (Early West Saxon): io and īo merge with eo and ēo; front rounded ø, ø̄ unround to
+e, ē.
+# The ø unrounding is from the Germanic umlaut page ("ø̄ > ē": fø̄t > fēt).
+    io iːo iu iːu → eo eːo eo eːo
+    ø øː → e eː
+
+Palatal reversion: ċ and ċġ revert to c and g before a consonant.
+# Not between the two halves of a doubled palatal (ċċ, ċġ).
+    tʃ dʒ → k g / _C // _tʃ, _dʒ
+
+Labiodental f: the Proto-Germanic bilabial ɸ is the labiodental f of Old English.
+# NOTE: not a change the sources discuss; both write the sound f. Made explicit so later stages get f.
+    ɸ → f
+
+Epenthesis: a vowel appears between a consonant and a final r.
+# NOTE: not on the page as a rule; it mentions epenthesis only for sāwol. Here it's limited to final
+# Cr (æcer).
+    ∅ → e / C_r#

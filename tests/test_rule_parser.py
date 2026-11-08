@@ -4,7 +4,7 @@ import unittest
 from vakya import DATA_DIR
 from vakya.phonemes import inventory
 from vakya.rule_parser import (Boundary, Choice, Class, Environment, Feature, Optional, RuleParseError, Segment,
-                               format_rule, parse_rule, parse_source)
+                               format_rule, parse_rule)
 
 def seg(text):
     [phoneme] = inventory().tokenize(text)
@@ -52,6 +52,13 @@ class ParseRuleTest(unittest.TestCase):
         self.assertEqual(rule.target, ((),))
         self.assertEqual(rule.environments, (Environment((Boundary("#"),), (seg("s"),)),))
 
+    def test_set_at_start_of_environment(self):
+        rule = parse_rule("s → ʂ / {r, i}_")
+        self.assertIsInstance(rule.environments[0].left[0], Choice)
+
+    def test_spaces_around_underscore(self):
+        self.assertEqual(parse_rule("s → z / V _ V , # _ t"), parse_rule("s → z / V_V, #_t"))
+
     def test_arrow_and_null_spellings(self):
         for text in ("h₂ > Ø / V_V", "h₂ -> 0 / V_V", "h₂→∅/V_V"):
             self.assertEqual(parse_rule(text), parse_rule("h₂ → ∅ / V_V"), text)
@@ -66,7 +73,17 @@ class ParseRuleTest(unittest.TestCase):
                                              Environment((), (seg("j"),))))
         self.assertEqual(rule.exceptions, (Environment((seg("s"),), ()),))
 
+    def test_features_after_a_set_apply_to_each_member(self):
+        rule = parse_rule("{æ, i}[-stressed] → e")
+        [[choice]] = rule.target
+        self.assertEqual([option[0].features for option in choice.options],
+                         [(Feature("stressed", False),), (Feature("stressed", False),)])
+        with self.assertRaisesRegex(RuleParseError, "every member must be one sound"):
+            parse_rule("{æt, i}[-stressed] → e")
+
     def test_feature_values(self):
+        self.assertEqual(parse_rule("[backness=Near-front] → e").target[0][0].features,
+                         (Feature("backness", "Near-front"),))
         rule = parse_rule("[manner=Stop +voice] → [manner=Fricative]")
         self.assertEqual(rule.target, ((Class(None, (Feature("manner", "Stop"), Feature("voice", True))),),))
 
@@ -79,6 +96,8 @@ class ParseRuleTest(unittest.TestCase):
             ("p f", "expected '→'"),
             ("p → f / C[+voice", "unclosed '\\['"),
             ("p → f / C[voice]", "needs \\+, - or =value"),
+            ("aː → æː / ! _N or if nasalized", "space inside an environment"),
+            ("i o → e a / V _ V C", "space inside an environment"),
         ]:
             with self.assertRaisesRegex(RuleParseError, message, msg=text):
                 parse_rule(text)
@@ -93,15 +112,6 @@ class FormatRuleTest(unittest.TestCase):
 
     def test_normalizes_spelling(self):
         self.assertEqual(format_rule(parse_rule("h₂>Ø/ V _ V")), "h₂ → ∅ / V_V")
-
-class ParseSourceTest(unittest.TestCase):
-    def test_sample(self):
-        with open(os.path.join(DATA_DIR, "sources", "proto-iranian-sample.txt"), encoding="utf-8") as f:
-            rules, errors = parse_source(f.read())
-        self.assertEqual([entry.name for entry, _ in rules],
-                         ["pirantization", "Spirantization", "Deaspiration", "Assibilation"])
-        self.assertEqual([(entry.name, entry.line) for entry, _ in errors], [("Debuccalization", 15)])
-        self.assertTrue(rules[1][0].description.startswith("Stops became fricatives"))
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,86 @@
+# Proto-Germanic → West Germanic
+#
+# Sources (retrieved 2026-11-07):
+#   Wikipedia, "West Germanic languages", sections "Origins and characteristics" and "Phonology"
+#     https://en.wikipedia.org/wiki/West_Germanic_languages
+#   Wikipedia, "Phonological history of Old English", section "Unstressed vowel reduction", steps 1–2,
+#     which it dates to West Germanic times
+#     https://en.wikipedia.org/wiki/Phonological_history_of_Old_English
+#
+# The West Germanic page gives the consonant changes in a partial order ("must have occurred after");
+# it doesn't order the vowel changes, so their order here is a choice (NOTE: lines).
+
+from: Proto-Germanic
+to: West Germanic
+
+class C = [type=Consonant]
+class V = [type=Vowel]
+class N = {m, n}
+
+# ---- Vowels ------------------------------------------------------------------------------------
+
+A-mutation: u is lowered to o when ɑ or ō is in the next syllable.
+# NOTE: the page gives only the trigger. The usual exceptions (no a-mutation before a nasal plus
+# consonant, as in *hundą > hund, or when i or j intervenes) aren't on the page; both are included
+# (*brugjō has y in bryċġ, not o). Placed first, since the vowels that trigger it change below.
+    u → o / _C(C){ɑ, ɑ̃, ɔː, oː} // _NC, _j, _Cj
+
+Raising of ō: Proto-Germanic ɔː (ō) is raised to oː, at every length and nasal or not.
+    ɔː ɔ̂ ɔ̃ː ɔ̃̂ → oː ô õː õ̂
+
+Final ō: absolutely final non-nasal ō is raised and shortened to u; other final-syllable ō becomes ā.
+# From the Old English page, which says overlong ô and ō in medial syllables were unaffected.
+    oː[-stressed] → u / _#
+    oː[-stressed] → ɑː / _C(C)#
+
+Overlong vowels: overlong vowels become simple long vowels.
+    V[+overlong] → V[-overlong]
+
+Lowering of ē¹: Proto-Germanic ē (ɛː) becomes ā, or ō before a nasal.
+# NOTE: stressed syllables only. Unstressed ē is left for the Old English shortening of unstressed long
+# vowels, which gives *fadēr > fæder; lowering it too would give *fædar.
+# NOTE: ē¹ and the rare ē² aren't distinguished in this data, so all stressed ē is treated as ē¹.
+    eː[+stressed] → oː / _N
+    eː[+stressed] → ɑː
+
+Unstressed ai: unstressed ai becomes ē.
+    ɑ[-stressed]i → eː
+
+# ---- Consonants (in the page's order) -----------------------------------------------------------
+
+zw and ðw: zw and ðw become ww.
+    zw ðw → ww ww
+
+Fortition of ð: ð becomes d in all positions (after zw, ðw > ww).
+    ð → d
+
+Delabialisation: labiovelars lose their labialisation except word-initially.
+# NOTE: Ringe & Taylor (cited by the page) treat them as kw-type clusters first; here they simply lose
+# rounding.
+    kʷ xʷ ɣʷ → k x ɣ // #_
+
+Loss of final z: word-final z is lost.
+    z → ∅ / _#
+
+Rhotacism: the remaining z merges with r.
+    z → r
+
+# Loss of final -a (including -ą) in polysyllables is listed here by the West Germanic page, but the
+# Old English page's worked examples (*faraną > faran vs. *faranaz > faren) need those vowels to
+# survive Old English a-fronting and a-restoration. It's applied in the Old English file instead.
+
+Final j: j left at the end of a word after a consonant becomes i.
+# From the Old English page ("Loss of -(i)j-"): when -j- became word-final after loss of a following
+# vowel, it was converted into -i.
+# NOTE: here it fires only once the following vowel has gone, which in this data happens in Old English;
+# the rule is repeated there.
+    j → i / C_#
+
+West Germanic gemination: every consonant except r is doubled before j.
+    p t k ɸ θ x s β d ɣ m n l → pp tt kk ɸɸ θθ xx ss ββ dd ɣɣ mm nn ll / _j
+
+Allophones of b: b is a stop word-initially, after m and when doubled; β only elsewhere.
+# From the page's Phonology section ("[β] was an allophone of /b/ word medially, except when preceded
+# by /m/ or geminated"). Grimm's law wrote every b as β, so the stop is restored here.
+    β → b / #_, m_
+    ββ → bb

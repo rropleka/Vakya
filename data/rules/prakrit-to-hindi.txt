@@ -1,0 +1,22 @@
+# Prakrit → Hindi
+#
+# Source: Wikipedia, "Prakrit", section "Up to Apabhramsha", the Late Prakrit stage that Hindi continues
+# (retrieved 2026-11-07)
+#   https://en.wikipedia.org/wiki/Prakrit
+#
+# NOTE: only the Apabhramsha changes on that page; the New Indo-Aryan changes from Apabhramsha to Hindi
+# (schwa deletion and others) aren't modelled yet.
+
+from: Prakrit
+to: Hindi
+
+class V = [type=Vowel]
+
+Final long vowels: final long vowels shorten, merging with the short vowels (ā ī ū ē ō become a i u i u).
+    aː iː uː eː oː → a i u i u / _#
+
+Intervocalic v: v is lost after a high vowel.
+    ʋ → ∅ / {i, u}_V
+
+Shortening of ū: long ū before a vowel is shortened.
+    uː → u / _V

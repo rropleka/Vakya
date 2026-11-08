@@ -1,0 +1,102 @@
+phonemes,spelling,read,context
+a,,no,C_
+a,अ,no,
+aː,ा,no,C_
+aː,आ,no,
+i,ि,no,C_
+i,इ,no,
+iː,ी,no,C_
+iː,ई,no,
+u,ु,no,C_
+u,उ,no,
+uː,ू,no,C_
+uː,ऊ,no,
+r̩,ृ,no,C_
+r̩,ऋ,no,
+eː,े,no,C_
+eː,ए,no,
+oː,ो,no,C_
+oː,ओ,no,
+ã,ं,no,C_
+ã,अं,no,
+ãː,ां,no,C_
+ãː,आं,no,
+ĩ,िं,no,C_
+ĩ,इं,no,
+ĩː,ीं,no,C_
+ĩː,ईं,no,
+ũ,ुं,no,C_
+ũ,उं,no,
+ũː,ूं,no,C_
+ũː,ऊं,no,
+ẽː,ें,no,C_
+ẽː,एं,no,
+õː,ों,no,C_
+õː,ओं,no,
+k,क्,no,_C // _r̩
+k,क,no,
+kʰ,ख्,no,_C // _r̩
+kʰ,ख,no,
+g,ग्,no,_C // _r̩
+g,ग,no,
+gʱ,घ्,no,_C // _r̩
+gʱ,घ,no,
+ŋ,ङ्,no,_C // _r̩
+ŋ,ङ,no,
+tʃ,च्,no,_C // _r̩
+tʃ,च,no,
+tʃʰ,छ्,no,_C // _r̩
+tʃʰ,छ,no,
+dʒ,ज्,no,_C // _r̩
+dʒ,ज,no,
+dʒʱ,झ्,no,_C // _r̩
+dʒʱ,झ,no,
+ɲ,ञ्,no,_C // _r̩
+ɲ,ञ,no,
+ʈ,ट्,no,_C // _r̩
+ʈ,ट,no,
+ʈʰ,ठ्,no,_C // _r̩
+ʈʰ,ठ,no,
+ɖ,ड्,no,_C // _r̩
+ɖ,ड,no,
+ɖʱ,ढ्,no,_C // _r̩
+ɖʱ,ढ,no,
+ɳ,ण्,no,_C // _r̩
+ɳ,ण,no,
+t,त्,no,_C // _r̩
+t,त,no,
+tʰ,थ्,no,_C // _r̩
+tʰ,थ,no,
+d,द्,no,_C // _r̩
+d,द,no,
+dʱ,ध्,no,_C // _r̩
+dʱ,ध,no,
+n,न्,no,_C // _r̩
+n,न,no,
+p,प्,no,_C // _r̩
+p,प,no,
+pʰ,फ्,no,_C // _r̩
+pʰ,फ,no,
+b,ब्,no,_C // _r̩
+b,ब,no,
+bʱ,भ्,no,_C // _r̩
+bʱ,भ,no,
+m,म्,no,_C // _r̩
+m,म,no,
+j,य्,no,_C // _r̩
+j,य,no,
+r,र्,no,_C // _r̩
+r,र,no,
+l,ल्,no,_C // _r̩
+l,ल,no,
+ʋ,व्,no,_C // _r̩
+ʋ,व,no,
+ɕ,श्,no,_C // _r̩
+ɕ,श,no,
+ʂ,ष्,no,_C // _r̩
+ʂ,ष,no,
+s,स्,no,_C // _r̩
+s,स,no,
+ɦ,ह्,no,_C // _r̩
+ɦ,ह,no,
+h,ः,no,

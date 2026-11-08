@@ -7,3 +7,6 @@ symbol,feature,value,description
 ̩,syllabic,True,syllabic (combining vertical line below)
 ̥,voice,Voiceless,voiceless (combining ring below)
 ́,stressed,True,stressed (combining acute)
+̂,long,True,overlong (combining circumflex)
+̂,overlong,True,overlong (combining circumflex)
+̃,nasal,True,nasal (combining tilde)

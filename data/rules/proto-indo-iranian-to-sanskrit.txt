@@ -1,0 +1,48 @@
+# Proto-Indo-Iranian → Sanskrit (Vedic)
+#
+# Source: Wikipedia, "Proto-Indo-Iranian language", section "Subsequent sound changes" (its table of
+# reflexes, Sanskrit column: regular outcome and conditioned outcomes) and section "Two palatal series";
+# retrieved 2026-11-07.
+#   https://en.wikipedia.org/wiki/Proto-Indo-Iranian_language
+#
+# The merged laryngeal *H is written ʔ (see pie-to-proto-indo-iranian.txt). The table gives outcomes,
+# not an order; the order here is a choice (NOTE: lines). Not modelled: the loss of the voiced sibilants
+# *z, *ẓ, *ź / *ž, *žʰ with lengthening, the cluster outcomes (kṣ, ch, cch, jj), and retroflexion of dentals
+# after *š.
+
+from: Proto-Indo-Iranian
+to: Sanskrit
+
+class C = [type=Consonant]
+class V = [type=Vowel]
+class L = {p, pʰ, b, bʱ, m, w}
+class A = {pʰ, tʰ, kʰ, cʰ, bʱ, dʱ, gʱ, ɟʱ, dʒʱ}
+
+Syllabic r before H: *r̥H becomes īr, or ūr next to labials.
+    r̩ʔ → uːr / L_
+    r̩ʔ → iːr
+
+Laryngeal: *H becomes i between consonants; elsewhere it is lost, lengthening a preceding vowel.
+    ʔ → i / C_C
+    Vʔ → V[+long]
+    ʔ → ∅
+
+Grassmann's law: an aspirate loses its aspiration when another aspirate follows in the next syllable.
+# NOTE: the table lists Grassmann outcomes (ph > p, ȷ́ʰ > j, ...) but not its exact conditions; this is
+# the standard statement. It precedes the palatal changes, since ȷ́ʰ > j by Grassmann (not h).
+    pʰ tʰ kʰ bʱ dʱ gʱ ɟʱ dʒʱ → p t k b d g ɟ dʒ / _V(C)A, _VC(C)A
+
+Palatal series: the first series ć ȷ́ ȷ́ʰ becomes Sanskrit ś j h; of the second series č ǰ ǰʰ, ǰʰ becomes h
+(č and ǰ stay, as Sanskrit c and j).
+    c ɟ ɟʱ dʒʱ → ɕ dʒ ɦ ɦ
+
+Semivowel w: *w becomes v, except after a vowel, where it is the u of a diphthong (au, o).
+    w → ʋ // V_C, V_#
+
+Visarga: *s, *š and *r become ḥ before a pause (word-finally here).
+    s ʂ r → h h h / _#
+
+Retroflex n: *n becomes ṇ after a retroflex consonant or *r within the same word, with no palatal or
+dental consonant in between.
+# NOTE: "in between" is approximated as at most one intervening vowel and one non-dental consonant.
+    n → ɳ / {r, r̩, ʂ}_, {r, r̩, ʂ}V_, {r, r̩, ʂ}V{k, g, p, b, m, w, j, ɦ}V_

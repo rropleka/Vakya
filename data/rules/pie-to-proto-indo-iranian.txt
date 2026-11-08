@@ -1,0 +1,65 @@
+# Proto-Indo-European → Proto-Indo-Iranian
+#
+# Source: Wikipedia, "Proto-Indo-Iranian language", section "Historical phonology" (retrieved 2026-11-07)
+#   https://en.wikipedia.org/wiki/Proto-Indo-Iranian_language
+#
+# The page gives "a fuller list of some of the hypothesized sound changes" without claiming an order,
+# except that laryngeal vocalisation preceded the second palatalisation and that the laryngeal merger was
+# about contemporary with the e/o merger. The order here is otherwise a choice (NOTE: lines).
+#
+# PII palatals ć ȷ́ ȷ́ʰ are written c ɟ ɟʱ, the second palatal series č ǰ ǰʰ as tʃ dʒ dʒʱ, and the merged
+# laryngeal *H as the glottal stop ʔ (the page: "which may have been a glottal stop").
+
+from: Proto-Indo-European
+to: Proto-Indo-Iranian
+
+class C = [type=Consonant]
+class V = [type=Vowel]
+class H = {h₁, h₂, h₃}
+
+Satem shift: the PIE palatals become PII ć ȷ́ ȷ́ʰ; the labiovelars merge with the plain velars.
+    kʲ gʲ gʲʱ → c ɟ ɟʱ
+    kʷ gʷ gʷʱ → k g gʱ
+
+Laryngeal aspiration: h₂ aspirates a preceding stop; a laryngeal before a vowel disappears.
+# NOTE: "and possibly h₁" is left out.
+    p t k c → pʰ tʰ kʰ cʰ / _h₂V
+    H → ∅ / _V
+
+Brugmann's law: o in an open syllable lengthens to ā.
+    o → aː / _CV
+
+Bartholomae's law: an aspirate followed by a voiceless consonant becomes a voiced stop plus a voiced
+aspirate.
+# NOTE: written for t only (dʰt > ddʰ); the page also gives s.
+    bʱt dʱt gʱt → bdʱ ddʱ gdʱ
+
+Ruki: s becomes š after a liquid, a high vowel or a velar.
+# NOTE: the velars are listed in their post-satem form; "the syllabic laryngeal" is left out.
+    s → ʂ / {r, r̩, l, l̩, i, iː, u, uː, k, g, gʱ, c, ɟ, ɟʱ}_
+
+Liquids: l, r, l̥, r̥ merge as r and r̥.
+    l l̩ → r r̩
+
+Syllabic nasals: m̥ and n̥ merge with a; word-final m̥ becomes am.
+    m̩ → am / _#
+    m̩ n̩ → a a
+
+Final r: word-final r is lost after long vowels.
+    r → ∅ / V[+long]_#
+
+Laryngeal vocalisation: a laryngeal becomes i after a consonant and before a consonant cluster, or after a
+consonant at the end of a word.
+    H → i / C_CC, C_#
+
+Second palatalisation (law of palatals): k, g, gʰ become č, ǰ, ǰʰ before the front vowels i, e.
+    k g gʱ → tʃ dʒ dʒʱ / _{i, iː, e, eː}
+
+Merger of e and o with a: e, o merge with a, and ē, ō with ā.
+    e o eː oː → a a aː aː
+
+Merger of laryngeals: the remaining laryngeals merge as *H.
+    h₁ h₂ h₃ → ʔ ʔ ʔ
+
+Lubotsky's law: H disappears before a voiced unaspirated stop followed by another consonant.
+    ʔ → ∅ / _{b, d, g, ɟ, dʒ}C

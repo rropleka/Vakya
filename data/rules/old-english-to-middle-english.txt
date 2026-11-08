@@ -1,0 +1,70 @@
+# Old English → Middle English
+#
+# Sources (retrieved 2026-11-07):
+#   Wikipedia, "Middle English phonology", section "Phonological processes"
+#     https://en.wikipedia.org/wiki/Middle_English_phonology
+#   Wikipedia, "Phonological history of Old English", sections "Vowel lengthening" and "Diphthong changes"
+#     https://en.wikipedia.org/wiki/Phonological_history_of_Old_English
+#
+# Middle English here is the London/Midlands type that leads to Modern English, before final -e was
+# lost (around Chaucer's time) and before the Great Vowel Shift. NOTE: standard Middle English
+# descends mostly from Anglian Old English, while the Old English stage here is West Saxon; the
+# dialect differences aren't modelled.
+
+from: Old English
+to: Middle English
+
+class C = [type=Consonant]
+class V = [type=Vowel]
+class E = {[type=Vowel backness=Front], [type=Vowel backness=Near-front]}
+class B = [type=Vowel backness=Back]
+
+Late West Saxon: the diphthongs ie and īe become y and ȳ.
+    ie iːe → y yː
+
+Initial h: h at the start of a word is [h], not [x].
+# From the Proto-Germanic page's Allophones section (Trask: x was reduced to h word-initially); made
+# explicit here so the spelling stage can tell h from gh.
+    x → h / #_
+
+Homorganic lengthening: stressed vowels are lengthened before nd, ld, rd, mb, ng, but not when
+another consonant follows.
+    V[+stressed -long] → V[+long] / _{nd, ld, rd, mb, ng, nɣ}{V, #}
+
+Stressed vowel changes: the diphthongs simplify (ea to æ, eo to ø); ø unrounds to e; y unrounds to i;
+æ and a merge as a; long ǣ and ā rise to ɛː and ɔː.
+# NOTE: the backing of ø to o between a palatal and a following syllable (cheosen) isn't modelled, and
+# the southwestern y and ø are not kept.
+    æɑ æːɑ eo eːo → æ æː ø øː
+    ø øː → e eː
+    y yː → i iː
+    æ ɑ æː ɑː → a a ɛː ɔː
+
+Reduction of unstressed vowels: final unstressed m becomes n; all unstressed vowels become ə.
+# NOTE: the loss of final n in inflectional syllables depends on morphology and isn't modelled.
+    m → n / V[-stressed]_#
+    V[-stressed] → ə
+
+Vocalisation of ɣ: ɣ after a vowel becomes u, forming new diphthongs.
+    ɣ → u / V_
+
+Breaking: i is inserted between a front vowel and h; u between a back vowel (or short a) and h.
+    ∅ → i / E_x // i_, iː_
+    ∅ → u / B_x, a_x // u_, uː_
+
+Open-syllable lengthening: stressed a, e, o are lengthened in an open syllable, and e, o are lowered
+(to ɛː, ɔː); not when two or more syllables follow.
+# NOTE: the high vowels i and u, which the page says were lengthened only occasionally, are left out.
+    a[+stressed] e[+stressed] o[+stressed] → aː ɛː ɔː / _CV // _CVCV, _CVCCV
+
+Trisyllabic laxing: long vowels are shortened when two or more syllables follow.
+    V[+long +stressed] → V[-long] / _C(C)VC(C)V
+
+Pre-cluster shortening: long vowels are shortened before three consonants, and later before two,
+except before st and where homorganic lengthening applied.
+    V[+long] → V[-long] / _CCC
+    V[+long] → V[-long] / _CC // _st, _nd, _ld, _rd, _mb, _ng
+
+Reduction of double consonants: geminates become single consonants (after open-syllable lengthening).
+# NOTE: written as a list, since the notation can't say "two identical consonants".
+    pp tt kk bb dd gg ff ss θθ ðð mm nn ll rr ʃʃ tʃtʃ → p t k b d g f s θ ð m n l r ʃ tʃ
